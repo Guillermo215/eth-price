@@ -1,0 +1,34 @@
+import requests
+from bs4 import BeautifulSoup
+import time
+import sched
+
+s = sched.scheduler(time.time, time.sleep)
+def ether(sc):
+
+    mainpage = requests.get('https://coinmarketcap.com/currencies/ethereum/')
+    soup = BeautifulSoup(mainpage.content, 'html.parser')
+
+    statsContainer = soup.find_all("div", {"class" : "hide statsContainer"})
+    statsValues = statsContainer[0].find_all("div", {"class" : "statsValue"})
+    priceContainer = soup.find_all("div", {"class" : "priceSection"})
+    priceValues = priceContainer[0].find_all("div", {"class" : "priceValue"})
+
+    statsValue_marketcap = statsValues[0].text.strip()
+    print(statsValue_marketcap)
+    statsValue_fully_diluted_marketcap = statsValues[1].text.strip()
+    print(statsValue_fully_diluted_marketcap)
+    statsValue_volume = statsValues[2].text.strip()
+    print(statsValue_volume)
+    statsValue_volume_per_marketcap = statsValues[3].text.strip()
+    print(statsValue_volume_per_marketcap)
+    statsValue_circulating_supply = statsValues[4].text.strip()
+    print(statsValue_circulating_supply)
+    priceValue_ethereum_price = priceValues[0].text.strip()
+    print(priceValue_ethereum_price)
+
+
+    sc.enter(5, 1, ether, (sc,))
+
+s.enter(5, 1, ether, (s,))
+s.run()
